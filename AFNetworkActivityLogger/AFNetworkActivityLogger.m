@@ -132,14 +132,22 @@ static void * AFNetworkRequestStartDate = &AFNetworkRequestStartDate;
         responseObject = notification.userInfo[AFNetworkingTaskDidCompleteSerializedResponseKey];
     }
 
+    NSData *rawResponseData = nil;
+    if (notification.userInfo) {
+        rawResponseData = notification.userInfo[AFNetworkingTaskDidCompleteResponseDataKey];
+    }
+    
     NSTimeInterval elapsedTime = [[NSDate date] timeIntervalSinceDate:objc_getAssociatedObject(notification.object, AFNetworkRequestStartDate)];
 
     for (id <AFNetworkActivityLoggerProtocol> logger in self.loggers) {
         if (request && logger.filterPredicate && [logger.filterPredicate evaluateWithObject:request]) {
             return;
         }
-
-        [logger URLSessionTaskDidFinish:task withResponseObject:responseObject inElapsedTime:elapsedTime withError:error];
+        if ([logger respondsToSelector: @selector(URLSessionTaskDidFinish:withRawResponseData:inElapsedTime:withError:)]) {
+            [logger URLSessionTaskDidFinish:task withRawResponseData:rawResponseData inElapsedTime:elapsedTime withError:error];
+        } else {
+            [logger URLSessionTaskDidFinish:task withResponseObject:responseObject inElapsedTime:elapsedTime withError:error];
+        }
     }
 }
 

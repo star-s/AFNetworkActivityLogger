@@ -88,5 +88,9 @@ typedef NS_ENUM(NSUInteger, AFHTTPRequestLoggerLevel) {
 - (void)URLSessionTaskDidStart:(NSURLSessionTask *)task;
 - (void)URLSessionTaskDidFinish:(NSURLSessionTask *)task withResponseObject:(id)responseObject inElapsedTime:(NSTimeInterval)elapsedTime withError:(NSError *)error;
 
+@optional
+
+- (void)URLSessionTaskDidFinish:(NSURLSessionTask *)task withRawResponseData:(NSData *)data inElapsedTime:(NSTimeInterval)elapsedTime withError:(NSError *)error;
+
 @end
 
